@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useCallback} from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 
 import './App.css';
@@ -9,7 +9,7 @@ import Navbar from './Components/Navbar/Navbar';
 function App() {
   const statusList = ['In progress', 'Backlog', 'Todo', 'Done', 'Cancelled']
   const userList = ['Anoop sharma', 'Yogesh', 'Shankar Kumar', 'Ramesh', 'Suresh']
-  const priorityList = [{name:'No priority', priority: 0}, {name:'Low', priority: 1}, {name:'Medium', priority: 2}, {name:'High', priority: 3}, {name:'Urgent', priority: 4}]
+  const priorityList = [{ name: 'No priority', priority: 0 }, { name: 'Low', priority: 1 }, { name: 'Medium', priority: 2 }, { name: 'High', priority: 3 }, { name: 'Urgent', priority: 4 }]
 
   const [groupValue, setgroupValue] = useState(getStateFromLocalStorage() || 'status')
   const [orderValue, setorderValue] = useState('title')
@@ -45,7 +45,7 @@ function App() {
     if (storedState) {
       return JSON.parse(storedState);
     }
-    return null; 
+    return null;
   }
 
   useEffect(() => {
@@ -53,37 +53,37 @@ function App() {
     async function fetchData() {
       const response = await axios.get('https://api.quicksell.co/v1/internal/frontend-assignment');
       await refactorData(response);
-  
+
     }
     fetchData();
-    async function refactorData(response){
+    async function refactorData(response) {
       let ticketArray = []
-        if(response.status  === 200){
-          for(let i=0; i<response.data.tickets.length; i++){
-            for(let j=0; j<response.data.users.length; j++){
-              if(response.data.tickets[i].userId === response.data.users[j].id){
-                let ticketJson = {...response.data.tickets[i], userObj: response.data.users[j]}
-                ticketArray.push(ticketJson)
-              }
+      if (response.status === 200) {
+        for (let i = 0; i < response.data.tickets.length; i++) {
+          for (let j = 0; j < response.data.users.length; j++) {
+            if (response.data.tickets[i].userId === response.data.users[j].id) {
+              let ticketJson = { ...response.data.tickets[i], userObj: response.data.users[j] }
+              ticketArray.push(ticketJson)
             }
           }
         }
+      }
       await setticketDetails(ticketArray)
       orderDataByValue(ticketArray)
     }
-    
+
   }, [orderDataByValue, groupValue])
 
-  function handleGroupValue(value){
+  function handleGroupValue(value) {
     setgroupValue(value);
     console.log(value);
   }
 
-  function handleOrderValue(value){
+  function handleOrderValue(value) {
     setorderValue(value);
     console.log(value);
   }
-  
+
   return (
     <>
       <Navbar
@@ -96,10 +96,10 @@ function App() {
         <div className="board-details-list">
           {
             {
-              'status' : <>
+              'status': <>
                 {
                   statusList.map((listItem) => {
-                    return(<List
+                    return (<List
                       groupValue='status'
                       orderValue={orderValue}
                       listTitle={listItem}
@@ -110,34 +110,34 @@ function App() {
                   })
                 }
               </>,
-              'user' : <>
-              {
-                userList.map((listItem) => {
-                  return(<List
-                    groupValue='user'
-                    orderValue={orderValue}
-                    listTitle={listItem}
-                    listIcon=''
-                    userList={userList}
-                    ticketDetails={ticketDetails}
-                  />)
-                })
-              }
+              'user': <>
+                {
+                  userList.map((listItem) => {
+                    return (<List
+                      groupValue='user'
+                      orderValue={orderValue}
+                      listTitle={listItem}
+                      listIcon=''
+                      userList={userList}
+                      ticketDetails={ticketDetails}
+                    />)
+                  })
+                }
               </>,
-              'priority' : <>
-              {
-                priorityList.map((listItem) => {
-                  return(<List
-                    groupValue='priority'
-                    orderValue={orderValue}
-                    listTitle={listItem.priority}
-                    listIcon=''
-                    priorityList={priorityList}
-                    ticketDetails={ticketDetails}
-                  />)
-                })
-              }
-            </>
+              'priority': <>
+                {
+                  priorityList.map((listItem) => {
+                    return (<List
+                      groupValue='priority'
+                      orderValue={orderValue}
+                      listTitle={listItem.priority}
+                      listIcon=''
+                      priorityList={priorityList}
+                      ticketDetails={ticketDetails}
+                    />)
+                  })
+                }
+              </>
             }[groupValue]
           }
         </div>
